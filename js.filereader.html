@@ -250,7 +250,7 @@ function capitalizeFirstLetter(text) {
     document.getElementById('editTitle').value = currentUsersblogsArr[index].title;
     document.getElementById('editDescription').value = currentUsersblogsArr[index].description;
 
-    // Set old image to preview and keep it as default if no new image is picked
+    
     newImageData = currentUsersblogsArr[index].image;
     document.getElementById('previewEditImage').src = newImageData;
 
@@ -278,7 +278,7 @@ function saveEdit() {
         return;
     }
 
-    // Update the blog post
+    
     currentUsersblogsArr[currentEditIndex].title = newTitle;
     currentUsersblogsArr[currentEditIndex].description = newDescription;
     currentUsersblogsArr[currentEditIndex].image = newImageData;
@@ -291,7 +291,7 @@ function saveEdit() {
 function closeEdit() {
     document.getElementById('editBtn').style.display = 'none';
 
-    // Optional: clear file input so previous file doesn't linger
+    
     document.getElementById('editImageFile').value = '';
 }
 
