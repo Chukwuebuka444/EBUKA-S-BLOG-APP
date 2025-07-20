@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body{
+            display: flex;
+            justify-content: center;
+        }
+        .body{
+        margin-top: 10%;
+        width: 300px;
+        height: 200px;
+        background-color: crimson;
+        border-radius: 15px;
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+        align-items: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="body">
+        <img src="" id="dp" alt="" width="100px" height="100px" style="border-radius: 50%;">
+
+    <br>
+    <br>
+    <input type="file" onchange="chooseDp(event)">
+    </div>
+</body>
+
+</html>
+<script>
+    let users = JSON.parse(localStorage.getItem('users')) || []
+    let currentUserIndex = localStorage.getItem('currentUserIndex') //2
+    let currentUser = users[currentUserIndex]// database[2]
+
+    function checkUser() {
+        if (!currentUser) {
+            alert('unauthorized')
+            location.href = 'login.html'
+            return
+        }
+        //null 'gvhhh'
+        dp.src = currentUser.profilePicture || 'jsdefaultpic.webp'
+
+    }
+
+    checkUser()
+
+
+    function chooseDp(ev) {
+        let file = ev.target.files[0]
+
+        let reader = new FileReader()
+        if (file) {
+            reader.readAsDataURL(file)
+        }
+
+        reader.addEventListener('load', (ev) => {
+            dp.src = ev.target.result
+            currentUser.profilePicture = ev.target.result
+            localStorage.setItem('users', JSON.stringify(users));
+        })
+
+    }
+
+
+
+
+
+
+
+</script>

@@ -1,0 +1,73 @@
+<!-- login.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Login</title>
+  <style>
+    body{
+      width: 300px;
+      height: 400px;
+      border-radius: 15px;
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+      border: 3px solid crimson;
+      justify-content: center;
+      align-items: center;
+      margin-left: 500px;
+    }
+    #btn2{
+      width: 150px;
+      height: 50px;
+      background-color: crimson;
+      border-radius: 5px;
+
+    }
+    .username,.password,.email{
+      width: 250px;
+    }
+  </style>
+</head>
+<body>
+  <h2>Login</h2>
+  <input class="username" type="text" placeholder="Username">
+  <input class="password" type="password" placeholder="Password">
+  <button id="btn2" onclick="login(event)">Login</button>
+
+  <script>
+    function colorchanger() {
+        function rgb() {
+        return Math.floor(Math.random()*256)
+      }
+      document.body.style.backgroundColor = `rgb(${rgb()},${rgb()},${rgb()})`
+      }
+      setInterval(()=>{
+        colorchanger()
+      },500)
+    function login(ev) {
+      ev.target.innerHTML = `logging in...`
+      ev.target.disabled = true
+      const username = document.querySelector('.username').value.trim();
+      const password = document.querySelector('.password').value.trim();
+
+      let users = JSON.parse(localStorage.getItem('users')) || [];
+      console.log(users);
+      
+      
+      let foundUserIndex = users.findIndex(user => user.username === username && user.password === password);
+      console.log(foundUserIndex);
+      setTimeout(()=>{
+        if (foundUserIndex !== -1) {
+        alert("Login successful!");
+        localStorage.setItem("currentUserIndex", foundUserIndex); 
+        console.log(foundUserIndex);
+        
+        window.location.href = "js.filereader.html";
+      } else {
+        alert("Invalid username or password.");
+      }
+      },3000)
+      }
+  </script>
+</body>
+</html>

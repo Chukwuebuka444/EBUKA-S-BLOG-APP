@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="dashboard.css">
+</head>
+<body>
+
+    <div id="editBtn" style="display: none; position: fixed; top: 5%; left: 50%; transform: translateX(-50%);
+    background: white; border: 1px solid #ccc; padding: 20px; z-index: 999; width: 300px; box-shadow: 0 0 10px rgba(0,0,0,0.3);">
+    
+    <h3>Edit Blog </h3>
+    <label>Title</label><br>
+    <input type="text" id="editTitle" style="width: 100%; margin-bottom: 10px;"><br>
+
+    <label>Description</label><br>
+    <textarea id="editDescription" style="width: 100%; height: 80px; margin-bottom: 10px;"></textarea><br>
+
+    <label>Image</label><br>
+    <img id="previewEditImage" src="" width="100%" style="margin-bottom: 10px; border: 1px solid #ddd;" />
+    <input type="file" id="editImageFile" onchange="previewNewImage(event)" style="margin-bottom: 15px;"><br>
+
+    <div style="text-align: right;">
+        <button onclick="saveEdit()" style="margin-right: 5px;">Save</button>
+        <button onclick="closeEdit()">Cancel</button>
+    </div>
+</div>
+
+
+
+
+
+
+     <!-- <button onclick="logOut()">log out</button> -->
+    <div class="nav">
+        <p> Blog app</p>
+        <h1 id="header"> Hello <span id="user">  </span></h1> <span>
+            <img id="dp" src="" alt="" style="width: 40px; height: 40px; border-radius: 50%;">
+            <a href="profile.html"><button onclick="profile()">profile</button></a>
+            <button onclick="logOut()">log out</button></span>
+    </div>
+
+
+
+
+    <div class="form-body">
+        <div class="form-image"></div>
+        <div class="form-textarea">
+            <h1> Post blog </h1>
+            <div class="line"></div>
+            <form>
+                <textarea class="textbox smallBox" id="forTitle" name="title" placeholder="Title" maxlength="30"
+                    required accept-charset="utf-8"> </textarea>
+
+                <textarea class="textbox bigBox" id="forDescription" name="messageText"
+                    placeholder="Write your message here" maxlength="600" required accept-charset="utf-8"></textarea>
+
+                <div>
+                    <input type="file" style="display: inline; width: 40%;" onchange="pickPicture(event)"> <img
+                        width="40px" id="ourpreviewimage" height="40px" alt="preview image">
+                </div>
+
+                <br>
+                <br>
+
+
+                <button class="submit-btn" type="button" onclick="postBlog(event)">SEND</button>
+            </form>
+
+        </div>
+    </div>
+
+
+    <div id="preview">
+
+
+
+    </div>
+    
+</body>
+</html>
+<script>
+
+    
+    let currentUserIndex = localStorage.getItem('currentUserIndex');
+    let users = JSON.parse(localStorage.getItem('users')) || [];
+
+    let currentUser = users [currentUserIndex]
+    checkUser();
+    console.log(currentUser);
+    
+    let currentUsersblogsArr = currentUser.blogPosts // []
+
+
+    function checkUser() {
+        if (!currentUser) {
+            alert('unauthorized')
+            location.href = 'sign-log.html';
+            return
+        } 
+        setInterval(()=>{
+
+            user.innerHTML = currentUser.username
+        },1000)
+        
+
+    }
+    console.log(currentUser);
+    
+    dp.src = currentUser.profilePicture || 'jsdefaultpic.webp'
+
+
+
+     function postBlog(ev) {
+        if (!forTitle.value.trim() || !forDescription.value.trim() || !ourpreviewimage.src) {
+            alert('please all fields are mandatory')
+        } else if (currentUsersblogsArr.find((blogObj) => blogObj.title === forTitle.value.trim())) {
+            alert('blog already exists')
+        } else {
+             ev.target.innerHTML = 'Sending....'
+            ev.target.disabled = true
+            setTimeout(() => {
+                let blogObj = {
+                    title: forTitle.value.trim().toLowerCase(),
+                    description: forDescription.value.trim().toLowerCase(),
+                    image: ourpreviewimage.src,
+                    liked: false
+                }
+
+                currentUsersblogsArr.push(blogObj)
+                localStorage.setItem('users', JSON.stringify(users))
+                alert('blog posted successfully')
+                displayBlogs()
+                ev.target.innerHTML = 'Send'
+                // ev.target.disabled = true
+
+            }, 3000);
+            }
+            
+    }
+ev.target.disabled = false
+
+    function pickPicture(ev) {
+        let file = ev.target.files[0]
+        if (!file) {
+            alert('please attach file')
+            return
+        }
+        let reader = new FileReader()
+        reader.readAsDataURL(file)
+        reader.addEventListener('load', (e) => {
+            ourpreviewimage.style.display = 'block'
+            ourpreviewimage.src = e.target.result
+        })
+
+    }
+function capitalizeFirstLetter(text) {
+        let finalText = text.toLowerCase()
+        finalText = finalText.replace(finalText[0], finalText[0].toUpperCase())
+
+        return finalText
+    }
+
+
+
+ function displayBlogs() {
+        console.log(currentUsersblogsArr);
+        
+        preview.innerHTML = ''
+            currentUsersblogsArr.forEach((blogObj, i) => {
+            preview.innerHTML += ` <div id="singlePost"> 
+            <p> ${blogObj.title} </p> 
+             <p> ${capitalizeFirstLetter(blogObj.title)} </p>
+            <p> ${blogObj.description} </p>
+            <img src="${blogObj.image}" width="100px" height="100px"/>
+            <button onclick="helpLike(${i})"> ${blogObj.liked ? 'liked' : 'not liked'} </button>
+            <div><button onclick="editPost(${i})"> edit </button>
+            <button onclick="deletePost(${i})"> delete </button>
+            </div>
+            <div/>
+            `
+        });
+
+    }
+
+
+     displayBlogs()
+     localStorage.setItem('users', JSON.stringify(users))
+
+    function helpLike(index) {
+        // if (currentUsersblogsArr[index].liked) {
+        //     currentUsersblogsArr[index].liked = false
+        // } else {
+        //     currentUsersblogsArr[index].liked = true
+        // }
+
+        currentUsersblogsArr[index].liked = !currentUsersblogsArr[index].liked
+        displayBlogs()
+        localStorage.setItem('users', JSON.stringify(users))
+
+
+    }
+
+    // function editPost(index) {
+    //     let newTitle = prompt('enter new title', currentUsersblogsArr[index].title)
+    //     let newDescription = prompt('enter new description', currentUsersblogsArr[index].description)
+    //     let newImage = prompt('enter new image url', currentUsersblogsArr[index].image)
+
+    //     if (newTitle && newDescription && newImage) {
+    //         currentUsersblogsArr[index].title = newTitle
+    //         currentUsersblogsArr[index].description = newDescription
+    //         currentUsersblogsArr[index].image = newImage
+    //         localStorage.setItem('signupObj', JSON.stringify(userData))
+    //         displayBlogs()
+    //     }
+        
+    // }
+
+    function deletePost(index) {
+        let confirmDelete = confirm('are you sure?')
+        if (confirmDelete) {
+            currentUsersblogsArr.splice(index, 1)
+            localStorage.setItem('users', JSON.stringify(users))
+            displayBlogs()
+        }}
+
+
+
+     function logOut() {
+     let confirmUserExit = confirm('are you sure?')
+     if (confirmUserExit) {
+         alert('logout successful')
+         localStorage.removeItem('currentUserIndex');
+         window.location.href = 'js loginpage.html'
+     }
+
+   }
+
+
+
+
+    let currentEditIndex = null
+    let newImageData = ""
+
+    function editPost(index) {
+    currentEditIndex = index;
+
+    document.getElementById('editTitle').value = currentUsersblogsArr[index].title;
+    document.getElementById('editDescription').value = currentUsersblogsArr[index].description;
+
+    // Set old image to preview and keep it as default if no new image is picked
+    newImageData = currentUsersblogsArr[index].image;
+    document.getElementById('previewEditImage').src = newImageData;
+
+    document.getElementById('editBtn').style.display = 'block';
+}
+
+function previewNewImage(event) {
+    let file = event.target.files[0];
+    if (!file) return;
+
+    let reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = (e) => {
+        newImageData = e.target.result;
+        document.getElementById('previewEditImage').src = newImageData;
+    };
+}
+
+function saveEdit() {
+    let newTitle = document.getElementById('editTitle').value.trim();
+    let newDescription = document.getElementById('editDescription').value.trim();
+
+    if (!newTitle || !newDescription || !newImageData) {
+        alert("All fields are required!");
+        return;
+    }
+
+    // Update the blog post
+    currentUsersblogsArr[currentEditIndex].title = newTitle;
+    currentUsersblogsArr[currentEditIndex].description = newDescription;
+    currentUsersblogsArr[currentEditIndex].image = newImageData;
+
+    localStorage.setItem('users', JSON.stringify(users));
+    displayBlogs();
+    closeEdit();
+}
+
+function closeEdit() {
+    document.getElementById('editBtn').style.display = 'none';
+
+    // Optional: clear file input so previous file doesn't linger
+    document.getElementById('editImageFile').value = '';
+}
+
+
+</script>

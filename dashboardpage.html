@@ -1,0 +1,54 @@
+<!-- dashboard.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Dashboard</title>
+</head>
+<body>
+  <h2 class="heading"></h2>
+  <input type="text" id="searchInput" placeholder="Search images...">
+<div id="imageContainer"></div>
+</body>
+</html>
+
+<script>
+let foundUser = JSON.parse(localStorage.getItem('newbase')) || {};
+document.querySelector('.heading').innerHTML = `MR ${foundUser.username} Welcome to our page `
+console.log(foundUser.name);
+
+    const images = [
+  { name: "netfli", src: "netflix bg.jpg" },
+  { name: "sqi3", src: "sqi3.jpg" },
+  { name: "sqi4", src: "sqi4.jpg" },
+  { name: "sqi5", src: "sqi5.jpg" }
+];
+// localStorage.setItem('newbase',JSON.stringify(foundUser))
+const searchInput = document.getElementById("searchInput");
+const imageContainer = document.getElementById("imageContainer");
+
+
+function showImages(filteredImages) {
+  imageContainer.innerHTML = ""; // Clear previous images
+
+  filteredImages.forEach(img => {
+    const image = document.createElement("img");
+    image.src = img.src;
+    image.alt = img.name;
+    image.width = 150;
+
+    imageContainer.appendChild(image);
+  });
+}
+
+// Initial display (all images)
+showImages(images);
+
+// Listen for input typing
+searchInput.addEventListener("input", () => {
+  const typed = searchInput.value.toLowerCase();
+
+  const filtered = images.filter(img => img.name.toLowerCase().includes(typed));
+
+  showImages(filtered);
+});
+  </script>
